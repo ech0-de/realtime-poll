@@ -2,9 +2,7 @@ const express = require('express');
 
 const app = express();
 app.use(express.static('./public'));
-app.get('/style.css', (req, res) => res.sendFile(require.resolve('mini.css', {
-    headers: { 'content-type': 'text/css' }
-})));
+app.get('/style.min.css', (req, res) => res.sendFile(require.resolve('mini.css')));
 
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
