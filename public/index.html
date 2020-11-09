@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Realtime Poll</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.min.css">
+  </head>
+  <body>
+    <div id="main"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      socket.on('poll', (poll, alreadyVoted) => {
+          if (alreadyVoted) {
+              document.getElementById('main').innerHTML = `
+                <div class="card">
+                    <h3 class="doc">${poll.question}</h3>
+                    <p class="doc">
+                        Sie haben bereits abgestimmt.
+                    </p>
+                </div>
+              `;
+          } else {
+              document.getElementById('main').innerHTML = `
+                <div class="card" style="max-width: 500px; margin: 60px auto;">
+                    <h3 class="doc">${poll.question}</h3>
+                    <p class="doc">
+                        ${poll.options.map((o, i) => `<button class="large" data-id="${i}">${o}</button>`).join('<br>')}
+                    </p>
+                </div>
+              `;
+              document.querySelectorAll('button').forEach((btn) => {
+                  btn.addEventListener('click', () => {
+                      document.getElementById('main').innerHTML = `
+                        <div class="card">
+                            <h3 class="doc">${poll.question}</h3>
+                            <p class="doc">
+                                Sie haben mit '${poll.options[parseInt(btn.getAttribute('data-id'), 10)]}' abgestimmt.
+                            </p>
+                        </div>
+                      `;
+                      socket.emit('vote', btn.getAttribute('data-id'));
+                  });
+              });
+          }
+      });
+    </script>
+  </body>
+</html>
