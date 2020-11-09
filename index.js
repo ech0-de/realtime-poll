@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     const clientId = `${socket.request.connection.remoteAddress}-${socket.request.headers['user-agent']}`;
 
     socket.on('auth', (x) => {
-        if (x === PASSWORD) {
+        if (x === process.env.PASSWORD) {
             adminSocket = socket;
             sendResults();
 
