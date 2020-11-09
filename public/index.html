@@ -3,8 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>Realtime Poll</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="/style.min.css">
+    <style type="text/css">
+        #main > div.card {
+            max-width: 500px;
+            margin: 60px auto;
+        }
+
+        button {
+            width: 97%;
+            text-overflow: ellipsis;
+        }
+    </style>
   </head>
   <body>
     <div id="main"></div>
@@ -23,7 +34,7 @@
               `;
           } else {
               document.getElementById('main').innerHTML = `
-                <div class="card" style="max-width: 500px; margin: 60px auto;">
+                <div class="card">
                     <h3 class="doc">${poll.question}</h3>
                     <p class="doc">
                         ${poll.options.map((o, i) => `<button class="large" data-id="${i}">${o}</button>`).join('<br>')}
