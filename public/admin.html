@@ -17,7 +17,11 @@
 
         #results {
             width: 100%;
-            padding: 2px 10px;
+            padding: 12px 14px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            min-height: 500px;
+            background-color: rgb(240, 240, 240);
         }
 
         .progress > progress {
@@ -38,45 +42,43 @@
     </style>
   </head>
   <body>
-      <form>
-          <div class="row">
-              <div class="col-md-4 col-xs-12" style="min-height: 500px" id="results">
-                  <h4 id="headline">Results</h4>
-              </div>
-
-              <div class="col-md-8">
-                  <fieldset>
-                      <legend class="doc">Current Poll</legend>
-                      <div class="row responsive-label">
-                          <div class="col-sm-12 col-md-2 col-lg-2">
-                              <label for="question" class="doc">Question</label>
-                          </div>
-                          <div class="col-sm-12 col-md col-lg">
-                              <input type="text" placeholder="Question Text" id="question" style="width:100%;" class="doc">
-                          </div>
-                      </div>
-
-                      <div class="row responsive-label">
-                          <div class="col-sm-12 col-md-2 col-lg-2">
-                              <label class="doc">Options</label>
-                          </div>
-                          <div class="col-sm-12 col-md col-lg" id="options">
-                              <button id="addOption">+ add option</button>
-                          </div>
-                      </div>
-
-                      <div class="row responsive-label">
-                          <div class="col-sm-12 col-md-2 col-lg-2">
-                          </div>
-                          <div class="col-sm-12 col-md col-lg">
-                              <button class="tertiary" id="submitPoll">&#9745; submit poll</button>
-                              <button class="secondary" id="removePoll">&#128465; remove poll</button>
-                          </div>
-                      </div>
-                  </fieldset>
-              </div>
-          </form>
+      <div class="row" style="padding: 10px;">
+          <div class="col-md-4 col-xs-12" id="results">
+              <h4 id="headline">Results</h4>
           </div>
+
+          <div class="col-md-8">
+              <fieldset>
+                  <legend class="doc">Current Poll</legend>
+                  <div class="row responsive-label">
+                      <div class="col-sm-12 col-md-2 col-lg-2">
+                          <label for="question" class="doc">Question</label>
+                      </div>
+                      <div class="col-sm-12 col-md col-lg">
+                          <input type="text" placeholder="Question Text" id="question" style="width:100%;" class="doc">
+                      </div>
+                  </div>
+
+                  <div class="row responsive-label">
+                      <div class="col-sm-12 col-md-2 col-lg-2">
+                          <label class="doc">Options</label>
+                      </div>
+                      <div class="col-sm-12 col-md col-lg" id="options">
+                          <button id="addOption">+ add option</button>
+                      </div>
+                  </div>
+
+                  <div class="row responsive-label">
+                      <div class="col-sm-12 col-md-2 col-lg-2">
+                      </div>
+                      <div class="col-sm-12 col-md col-lg">
+                          <button class="tertiary" id="submitPoll">&#9745; submit poll</button>
+                          <button class="secondary" id="removePoll">&#128465; remove poll</button>
+                      </div>
+                  </div>
+              </fieldset>
+          </div>
+      </div>
       <form>
           <fieldset>
               <legend class="doc">Preview</legend>
@@ -128,6 +130,7 @@
           bar.appendChild(progress);
 
           document.getElementById('results').appendChild(bar);
+          document.getElementById('results').style.visibility = 'visible';
       }
 
       const socket = io();
@@ -138,6 +141,7 @@
       socket.on('poll', (poll) => {
           document.getElementById('question').setAttribute('value', poll.question);
           document.getElementById('headline').innerText = poll.question;
+          document.getElementById('results').style.visibility = 'hidden';
           document.querySelectorAll('.option').forEach(option => option.remove());
           document.querySelectorAll('.progress').forEach(bar => bar.remove());
           poll.options.forEach((option, id) => appendOption(option, id));
