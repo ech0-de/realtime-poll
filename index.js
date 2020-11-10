@@ -1,4 +1,5 @@
 const express = require('express');
+const debounce = require('lodash.debounce');
 
 const app = express();
 app.use(express.static('./public'));
@@ -17,11 +18,11 @@ const poll = {
     options: []
 };
 
-let adminSocket;
 const votes = new Map();
+const adminSockets = new Set();
 
-function sendResults() {
-    if (adminSocket) {
+const sendResults = debounce(() => {
+    if (adminSockets.size > 0) {
         let sum = 0;
         const results = [];
         poll.options.forEach((option, i) => {
@@ -33,16 +34,16 @@ function sendResults() {
             results[vote] += 1;
         }
 
-        adminSocket.emit('results', results, sum);
+        adminSockets.forEach(s => s.emit('results', results, sum));
     }
-}
+}, 1000);
 
 io.on('connection', (socket) => {
     const clientId = `${socket.request.connection.remoteAddress}-${socket.request.headers['user-agent']}`;
 
     socket.on('auth', (x) => {
         if (x === process.env.PASSWORD) {
-            adminSocket = socket;
+            adminSockets.add(socket);
             sendResults();
 
             socket.on('update', (update) => {
@@ -69,8 +70,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        if (adminSocket === socket) {
-            adminSocket = null;
+        if (adminSockets.has(socket)) {
+            adminSockets.delete(socket);
         }
     });
 
